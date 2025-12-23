@@ -14,12 +14,19 @@ func (hs *HubServer) preCreateCheck() {
 
 func (hs *HubServer) HandleCreate(c *gin.Context) {
 
+	obj := struct {
+		DomainName string `form:"domain_name" binding:"required"`
+		Owner      string `form:"owner" binding:"required"`
+	}{}
 	//parse form data
+	c.ShouldBind(&obj) // gin框架功能
 
 	hs.preCreateCheck()
 	// task pipeline
-	//task := hs.Workflow.PushTask()
+	taskId := hs.workflow.PushTask()
 
+	// json response todo
+	c.JSON(200, gin.H{"task_id": taskId})
 	// write http response , taskId
 	//
 	// error

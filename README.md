@@ -34,3 +34,8 @@ service
     后期可以按微服务独立出来 
 
 client 和service 紧密联系
+
+middleware
+    字面意思
+        audit.go 审计日志
+    
