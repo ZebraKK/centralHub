@@ -10,6 +10,12 @@ a manage platform
     - log
 - error
 
+- gin request/respone
+
+- domain struct
+
+- mongo interface
+
 
 dir 说明
 
@@ -38,4 +44,7 @@ client 和service 紧密联系
 middleware
     字面意思
         audit.go 审计日志
+
+workflow
+    任务执行的引擎，把管理流程抽象出多个task 和action组合。
     

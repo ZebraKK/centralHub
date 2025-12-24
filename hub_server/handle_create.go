@@ -14,7 +14,7 @@ func (hs *HubServer) preCreateCheck() {
 
 func (hs *HubServer) HandleCreate(c *gin.Context) {
 
-	obj := struct {
+	obj := struct { // todo request struct define
 		DomainName string `form:"domain_name" binding:"required"`
 		Owner      string `form:"owner" binding:"required"`
 	}{}
@@ -24,6 +24,12 @@ func (hs *HubServer) HandleCreate(c *gin.Context) {
 	hs.preCreateCheck()
 	// task pipeline
 	taskId := hs.workflow.PushTask()
+
+	// build Cname  source Cname
+	// midsrc
+	// provider CDN configure
+	// double-check(test)
+	//
 
 	// json response todo
 	c.JSON(200, gin.H{"task_id": taskId})

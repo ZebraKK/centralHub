@@ -1,15 +1,15 @@
 package hubserver
 
 import (
-	"centralHub/service"
+	"centralHub/workflow"
 )
 
 type HubServer struct {
-	workflow *service.WorkflowService
+	workflow *workflow.Workflow
 }
 
 func NewHubServer() *HubServer {
 	return &HubServer{
-		workflow: service.NewWorkflowService(),
+		workflow: workflow.NewWorkflow(),
 	}
 }
