@@ -49,10 +49,11 @@ func InitLogger(isProd bool) {
 	// AuditLogger: 记录HTTP请求
 	AuditLogger = zerolog.New(auditWriter).With().Timestamp().Logger()
 	// RunLogger: 记录业务逻辑，生产环境开启调用者信息
-	RunLogger := zerolog.New(runWriter).With().Timestamp()
+	RunLoggerCtx := zerolog.New(runWriter).With().Timestamp()
 	if isProd {
-		RunLogger = RunLogger.Caller().Logger() // 生产环境显示调用文件和行号
+		RunLoggerCtx = RunLoggerCtx.Caller()
 	}
+	RunLogger := RunLoggerCtx.Logger()
 	// 替换zerolog的全局log（可选，便于业务中直接使用log.Info()）
 	log.Logger = RunLogger
 
@@ -85,8 +86,12 @@ func newLogWriter(cfg LogFileConfig, isProd bool) io.Writer {
 	return lumberjackWriter
 }
 
-// 全局日志实例（供外部调用）
+// WithReqID 返回带reqid字段的运行日志logger
+func WithReqID(reqid string) zerolog.Logger {
+	return log.Logger.With().Str("reqid", reqid).Logger()
+}
+
 var (
 	AuditLogger zerolog.Logger // 审计日志（HTTP请求）
-	RunLogger   = log.Logger   // 运行日志（业务逻辑，复用zerolog全局log）
+	RunLogger   zerolog.Logger // 运行日志（业务逻辑，复用zerolog全局log）
 )

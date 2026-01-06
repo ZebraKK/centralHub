@@ -4,7 +4,9 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog"
+	"github.com/google/uuid"
+
+	//"github.com/rs/zerolog"
 
 	"centralHub/logger"
 )
@@ -20,20 +22,51 @@ func AuditLog() gin.HandlerFunc {
 		latency := time.Since(start)
 
 		// 构建审计日志的结构化字段
-		auditFields := []zerolog.LogObjectMarshaler{
-			zerolog.String("method", c.Request.Method),
-			zerolog.String("path", c.Request.URL.Path),
-			zerolog.Int("status", c.Writer.Status()),
-			zerolog.Duration("latency", latency),
-			zerolog.String("client_ip", c.ClientIP()),
-			zerolog.String("user_agent", c.Request.UserAgent()),
-		}
+		event := logger.AuditLogger.Info().
+			Str("method", c.Request.Method).
+			Str("path", c.Request.URL.Path).
+			Int("status", c.Writer.Status()).
+			Dur("latency", latency).
+			Str("client_ip", c.ClientIP()).
+			Str("user_agent", c.Request.UserAgent())
+
 		// 若有请求错误，添加错误信息
 		if len(c.Errors) > 0 {
-			auditFields = append(auditFields, zerolog.String("errors", c.Errors.String()))
+			event = event.Str("errors", c.Errors.String())
 		}
 
 		// 写入审计日志（Info级别）
-		logger.AuditLogger.Info().Object("request", zerolog.Objs(auditFields...)).Msg("HTTP Request Audit")
+		event.Msg("HTTP Request Audit")
+	}
+}
+
+// AuditLogWithReqID 结合审计日志和请求ID中间件
+func AuditLogWithReqID() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// 生成或获取reqid
+		reqID := c.GetHeader("X-Request-Id")
+		if reqID == "" {
+			reqID = uuid.New().String()
+		}
+		c.Set("reqid", reqID)
+		c.Writer.Header().Set("X-Request-Id", reqID)
+
+		start := time.Now()
+		c.Next()
+		latency := time.Since(start)
+
+		event := logger.AuditLogger.Info().
+			Str("reqid", reqID).
+			Str("method", c.Request.Method).
+			Str("path", c.Request.URL.Path).
+			Int("status", c.Writer.Status()).
+			Dur("latency", latency).
+			Str("client_ip", c.ClientIP()).
+			Str("user_agent", c.Request.UserAgent())
+
+		if len(c.Errors) > 0 {
+			event = event.Str("errors", c.Errors.String())
+		}
+		event.Msg("HTTP Request Audit")
 	}
 }
