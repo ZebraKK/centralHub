@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"time"
 
-	lumberjack "github.com/natefinch/lumberjack/v2"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	lumberjack "gopkg.in/natefinch/lumberjack.v2"
 )
 
 // 定义日志分割器（lumberjack）

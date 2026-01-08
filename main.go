@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	hubserver "centralHub/hub_server"
+	hubserver "centralHub/hubserver"
 	"centralHub/logger"
 	"centralHub/middleware"
 )

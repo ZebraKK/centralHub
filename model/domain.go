@@ -15,3 +15,7 @@ type XLPlatformInfo struct {
 	ReverseName string
 	UserID      string
 }
+
+// cache 缓存
+
+// source 源

@@ -8,13 +8,24 @@ a manage platform
 - middleware
     - x
     - log
-- error
-
-- gin request/respone
+- 接口需要
+    - error定义
+    - http resp结构
+    - gin request/respone
 
 - domain struct
+    - 主要单元
+    - 外围（账户/公司）
 
 - mongo interface
+
+- 服务运行起来，日志文件等。
+
+- 逻辑伪代码
+
+- workflow 替代
+
+- config 加载
 
 
 dir 说明
@@ -29,6 +40,7 @@ model
     结构定义
     域名（整体需要管理、存储的 & domain cdn业务功能块的。参考volc）
     请求接口（request， resp）
+
 
 store
     主要涉及DB接口
