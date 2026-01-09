@@ -25,7 +25,14 @@ a manage platform
 
 - workflow 替代
 
-- config 加载
+- config 加载(AI)
+- http 基础请求封装(AI)
+
+- 域名归属验证()
+    - 调研流程
+    - 实现 验证接口
+        - 接口、实现逻辑，流程图
+
 
 
 dir 说明
@@ -78,3 +85,9 @@ workflow
     - 例如：type Workflow struct、func NewWorkflow()。
 4. 目录结构
     - 目录名与包名一致，全部小写，无下划线。
+
+
+
+// 服务购买
+dns 解析
+icp

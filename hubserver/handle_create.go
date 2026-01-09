@@ -10,11 +10,13 @@ import (
 func (hs *HubServer) preCreateCheck() {
 	// 请求，任务检测( 防止重复提交？ 排队？ 不同请求？ 覆盖？)
 
+	// 域名有效性检查(备案) ICP
+	// get ICP info from govt API
+
 	// 域名所有权检查
 
-	// 域名有效性检查(备案)
-
 	// 域名检查
+
 }
 
 func (hs *HubServer) HandleCreate(c *gin.Context) {
