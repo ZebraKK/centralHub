@@ -3,6 +3,9 @@ a manage platform
 
 
 *TODO* 
+- helloworld工程运行起来
+    - docker
+    - 文档
 - architecture
     - dir/files
 - middleware
@@ -27,6 +30,10 @@ a manage platform
 
 - config 加载(AI)
 - http 基础请求封装(AI)
+
+- review&修正AI 代码
+    - 啰嗦
+    - 验证
 
 - 域名归属验证()
     - 调研流程

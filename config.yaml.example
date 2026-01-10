@@ -1,0 +1,27 @@
+# CentralHub Configuration File
+# Copy this file to config.yaml and update with your settings
+
+server:
+  port: "8080"
+  mode: "debug"  # debug, release, test
+  timeout: 30    # seconds
+
+database:
+  mongodb:
+    uri: "mongodb://localhost:27017"
+    database: "centralhub"
+    timeout: 10  # seconds
+
+logger:
+  level: "info"           # debug, info, warn, error
+  output: "stdout"        # stdout, file
+  file_path: "logs/app.log"
+  max_size: 100           # megabytes
+  max_backups: 3          # number of backup files
+  max_age: 7              # days
+
+external:
+  volcengine:
+    access_key: "your-access-key"
+    secret_key: "your-secret-key"
+    region: "cn-beijing"
