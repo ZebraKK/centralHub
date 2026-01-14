@@ -1,0 +1,65 @@
+services:
+  # CentralHub Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: centralhub-app
+    ports:
+      - "8080:8080"
+    environment:
+      - GIN_MODE=debug
+    volumes:
+      # Mount config file
+      - ./config.yaml:/app/config.yaml:ro
+      # Mount logs directory
+      - ./logs:/app/logs
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - centralhub-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  # MongoDB Database
+  mongodb:
+    image: mongo:7.0
+    container_name: centralhub-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin123
+      - MONGO_INITDB_DATABASE=centralhub
+    volumes:
+      # Persist MongoDB data
+      - mongodb-data:/data/db
+      # MongoDB config
+      - mongodb-config:/data/configdb
+      # Init scripts (if needed)
+      # - ./scripts/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
+    networks:
+      - centralhub-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+networks:
+  centralhub-network:
+    driver: bridge
+
+volumes:
+  mongodb-data:
+    driver: local
+  mongodb-config:
+    driver: local

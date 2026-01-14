@@ -1,0 +1,26 @@
+# CentralHub Development Configuration
+
+server:
+  port: "8080"
+  mode: "debug"
+  timeout: 30
+
+database:
+  mongodb:
+    uri: "mongodb://admin:admin123@mongodb:27017"
+    database: "centralhub"
+    timeout: 10
+
+logger:
+  level: "debug"
+  output: "stdout"
+  file_path: "logs/app.log"
+  max_size: 100
+  max_backups: 3
+  max_age: 7
+
+external:
+  volcengine:
+    access_key: ""
+    secret_key: ""
+    region: "cn-beijing"

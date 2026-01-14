@@ -1,5 +1,149 @@
-# centralHub
-a manage platform
+# CentralHub
+
+一个基于 Go 和 Gin 框架的管理平台。
+
+## 功能特性
+
+- 域名管理
+- DNS 解析
+- ICP 备案
+- 与 Volcengine CDN 集成
+- RESTful API 接口
+- 审计日志
+- Docker 支持
+
+## 快速开始
+
+### 方式一：使用 Docker（推荐）
+
+#### 前置要求
+- Docker 20.10+
+- Docker Compose 2.0+
+
+#### 启动开发环境
+
+1. **复制配置文件**
+```bash
+cp config/config.dev.yaml config.yaml
+```
+
+2. **启动所有服务**
+```bash
+make dev
+# 或者
+docker-compose up -d
+```
+
+3. **查看日志**
+```bash
+make logs
+# 或者
+docker-compose logs -f
+```
+
+4. **访问应用**
+- 应用地址: http://localhost:8080
+- 健康检查: http://localhost:8080/health
+- MongoDB: localhost:27017
+
+#### 常用命令
+
+```bash
+# 查看所有可用命令
+make help
+
+# 启动开发环境
+make dev
+
+# 停止所有服务
+make stop
+
+# 重启服务
+make restart
+
+# 查看日志
+make logs
+
+# 查看应用日志
+make logs-app
+
+# 查看数据库日志
+make logs-db
+
+# 进入应用容器
+make shell-app
+
+# 进入数据库容器
+make shell-db
+
+# 清理所有容器和卷
+make docker-clean
+```
+
+### 方式二：本地运行
+
+#### 前置要求
+- Go 1.24.3+
+- MongoDB 7.0+
+
+#### 安装依赖
+
+```bash
+go mod download
+```
+
+#### 配置文件
+
+```bash
+cp config.yaml.example config.yaml
+# 编辑 config.yaml，配置数据库连接等信息
+```
+
+#### 运行应用
+
+```bash
+# 直接运行
+go run main.go
+
+# 或构建后运行
+make build
+./centralhub
+
+# 指定配置文件
+./centralhub -config=/path/to/config.yaml
+```
+
+## 配置说明
+
+配置文件支持 YAML 格式，包含以下部分：
+
+- **server**: 服务器配置（端口、模式、超时）
+- **database**: 数据库配置（MongoDB 连接）
+- **logger**: 日志配置（级别、输出、文件设置）
+- **external**: 外部服务配置（Volcengine 凭证）
+
+详细配置说明见 [config/README.md](config/README.md)
+
+## API 接口
+
+### 创建域名
+```bash
+POST /create
+```
+
+### 查询域名
+```bash
+GET /query
+```
+
+### 健康检查
+```bash
+GET /health
+```
+
+## 开发指南
+
+### 目录结构
 
 
 *TODO* 

@@ -110,6 +110,14 @@ func setupRouter(hubServer *hubserver.HubServer, cfg *config.Config) *gin.Engine
 	// Add custom middleware
 	r.Use(middleware.AuditLog())
 
+	// Health check endpoint
+	r.GET("/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"status":  "ok",
+			"service": "centralhub",
+		})
+	})
+
 	// Define routes
 	r.POST("/create", hubServer.HandleCreate)
 	r.GET("/query", hubServer.HandleQuery)
