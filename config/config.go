@@ -1,64 +1,63 @@
 package config
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
-
-	"github.com/goccy/go-yaml"
 )
 
 // Config represents the application configuration
 type Config struct {
-	Server   ServerConfig   `yaml:"server"`
-	Database DatabaseConfig `yaml:"database"`
-	Logger   LoggerConfig   `yaml:"logger"`
-	External ExternalConfig `yaml:"external"`
+	Server   ServerConfig   `json:"server"`
+	Database DatabaseConfig `json:"database"`
+	Logger   LoggerConfig   `json:"logger"`
+	External ExternalConfig `json:"external"`
 }
 
 // ServerConfig represents server-related configuration
 type ServerConfig struct {
-	Port    string `yaml:"port"`
-	Mode    string `yaml:"mode"` // debug, release, test
-	Timeout int    `yaml:"timeout"`
+	Port    string `json:"port"`
+	Mode    string `json:"mode"` // debug, release, test
+	Timeout int    `json:"timeout"`
 }
 
 // DatabaseConfig represents database configuration
 type DatabaseConfig struct {
-	MongoDB MongoDBConfig `yaml:"mongodb"`
+	MongoDB MongoDBConfig `json:"mongodb"`
 }
 
 // MongoDBConfig represents MongoDB connection configuration
 type MongoDBConfig struct {
-	URI      string `yaml:"uri"`
-	Database string `yaml:"database"`
-	Timeout  int    `yaml:"timeout"`
+	URI      string `json:"uri"`
+	Database string `json:"database"`
+	Timeout  int    `json:"timeout"`
 }
 
 // LoggerConfig represents logger configuration
 type LoggerConfig struct {
-	Level      string `yaml:"level"`  // debug, info, warn, error
-	Output     string `yaml:"output"` // stdout, file
-	FilePath   string `yaml:"file_path"`
-	MaxSize    int    `yaml:"max_size"`    // megabytes
-	MaxBackups int    `yaml:"max_backups"` // number of backups
-	MaxAge     int    `yaml:"max_age"`     // days
+	Level      string `json:"level"`  // debug, info, warn, error
+	Output     string `json:"output"` // stdout, file
+	FilePath   string `json:"file_path"`
+	MaxSize    int    `json:"max_size"`    // megabytes
+	MaxBackups int    `json:"max_backups"` // number of backups
+	MaxAge     int    `json:"max_age"`     // days
 }
 
 // ExternalConfig represents external service configurations
 type ExternalConfig struct {
-	Volcengine VolcengineConfig `yaml:"volcengine"`
+	Volcengine VolcengineConfig `json:"volcengine"`
 }
 
 // VolcengineConfig represents Volcengine SDK configuration
 type VolcengineConfig struct {
-	AccessKey string `yaml:"access_key"`
-	SecretKey string `yaml:"secret_key"`
-	Region    string `yaml:"region"`
+	AccessKey string `json:"access_key"`
+	SecretKey string `json:"secret_key"`
+	Region    string `json:"region"`
 }
 
 var GlobalConfig *Config
 
-// Load loads configuration from the specified file path
+// Load loads configuration from the specified file path (JSON format)
 func Load(configPath string) (*Config, error) {
 	// Read config file
 	data, err := os.ReadFile(configPath)
@@ -66,9 +65,9 @@ func Load(configPath string) (*Config, error) {
 		return nil, fmt.Errorf("failed to read config file: %w", err)
 	}
 
-	// Parse YAML
+	// Parse JSON
 	var cfg Config
-	if err := yaml.Unmarshal(data, &cfg); err != nil {
+	if err := json.Unmarshal(data, &cfg); err != nil {
 		return nil, fmt.Errorf("failed to parse config file: %w", err)
 	}
 
