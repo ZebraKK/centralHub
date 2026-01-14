@@ -1,0 +1,26 @@
+# CentralHub Test Environment Configuration
+
+server:
+  port: "8080"
+  mode: "test"
+  timeout: 30
+
+database:
+  mongodb:
+    uri: "mongodb://admin:admin123@mongodb-test:27017"
+    database: "centralhub_test"
+    timeout: 10
+
+logger:
+  level: "debug"
+  output: "stdout"
+  file_path: "logs/test.log"
+  max_size: 50
+  max_backups: 2
+  max_age: 3
+
+external:
+  volcengine:
+    access_key: "test-access-key"
+    secret_key: "test-secret-key"
+    region: "cn-beijing"

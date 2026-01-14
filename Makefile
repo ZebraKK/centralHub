@@ -5,7 +5,11 @@ help:
 	@echo "CentralHub Makefile Commands:"
 	@echo ""
 	@echo "Development:"
-	@echo "  make dev              - Start development environment with Docker Compose"
+	@echo "  make dev              - Start development environment (production-like)"
+	@echo "  make dev-hot          - Start development with hot reload (Air)"
+	@echo "  make dev-hot-down     - Stop hot reload development environment"
+	@echo "  make dev-hot-restart  - Restart hot reload development environment"
+	@echo "  make dev-hot-logs     - View hot reload development logs"
 	@echo "  make logs             - View application logs"
 	@echo "  make restart          - Restart the application"
 	@echo "  make stop             - Stop all containers"
@@ -56,8 +60,30 @@ docker-build:
 	docker build -t centralhub:latest .
 	@echo "Docker image built: centralhub:latest"
 
-# Start development environment
+# Start development environment (production-like)
 dev: docker-up
+
+# Start development environment with hot reload
+dev-hot:
+	@echo "Starting development environment with hot reload..."
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+	@echo "Development environment with hot reload started"
+
+# Stop development environment with hot reload
+dev-hot-down:
+	@echo "Stopping development environment..."
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml down
+	@echo "Development environment stopped"
+
+# Restart development environment with hot reload
+dev-hot-restart:
+	@echo "Restarting development environment..."
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml restart
+	@echo "Development environment restarted"
+
+# View logs for hot reload dev environment
+dev-hot-logs:
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml logs -f app
 
 # Start production environment
 prod:
