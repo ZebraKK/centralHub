@@ -159,6 +159,7 @@ GET /health
     - error定义
     - http resp结构
     - gin request/respone
+    - create/ownership
 
 - domain struct
     - 主要单元
@@ -167,6 +168,7 @@ GET /health
 - mongo interface
 
 - 服务运行起来，日志文件等。
+    - to check
 
 - 逻辑伪代码
 
@@ -174,6 +176,7 @@ GET /health
 
 - config 加载(AI)
 - http 基础请求封装(AI)
+
 
 - review&修正AI 代码
     - 啰嗦

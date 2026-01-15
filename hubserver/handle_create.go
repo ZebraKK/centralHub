@@ -13,7 +13,10 @@ func (hs *HubServer) preCreateCheck() {
 	// 域名有效性检查(备案) ICP
 	// get ICP info from govt API
 
-	// 域名所有权检查
+	// 域名所有权检查(ownership)
+	//
+	domain := ""
+	hs.getOwnership(domain)
 
 	// 域名检查
 

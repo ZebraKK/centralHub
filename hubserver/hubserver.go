@@ -13,3 +13,10 @@ func NewHubServer() *HubServer {
 		workflow: workflow.NewWorkflow(),
 	}
 }
+
+func (hs *HubServer) getOwnership(domain string) (string, error) {
+
+	// db query
+	// hs.ownershipDB.get(domain)
+	return "", nil
+}
