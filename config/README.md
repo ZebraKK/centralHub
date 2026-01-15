@@ -4,7 +4,7 @@ This package provides configuration management for the CentralHub application.
 
 ## Features
 
-- YAML-based configuration
+- JSON-based configuration
 - Command-line flag support for config file path
 - Configuration validation
 - Default fallback values
@@ -17,10 +17,10 @@ This package provides configuration management for the CentralHub application.
 Copy the example configuration file:
 
 ```bash
-cp config.yaml.example config.yaml
+cp config.json.example config.json
 ```
 
-Then edit `config.yaml` with your settings.
+Then edit `config.json` with your settings.
 
 ### 2. Configuration Structure
 
@@ -33,14 +33,14 @@ The configuration file supports the following sections:
 
 ### 3. Running the Application
 
-#### Using default config file (config.yaml)
+#### Using default config file (config.json)
 ```bash
 ./centralhub
 ```
 
 #### Using custom config file
 ```bash
-./centralhub -config=/path/to/your/config.yaml
+./centralhub -config=/path/to/your/config.json
 ```
 
 ### 4. Configuration Priority
@@ -70,4 +70,36 @@ The server supports three modes:
 
 ## Example Configuration
 
-See `config.yaml.example` for a complete example configuration file.
+Below is a sample `config.json`:
+
+```json
+{
+  "server": {
+    "port": "8080",
+    "mode": "debug",
+    "timeout": 30
+  },
+  "database": {
+    "mongodb": {
+      "uri": "mongodb://localhost:27017",
+      "database": "centralhub",
+      "timeout": 10
+    }
+  },
+  "logger": {
+    "level": "info",
+    "output": "stdout",
+    "file_path": "logs/app.log",
+    "max_size": 100,
+    "max_backups": 3,
+    "max_age": 7
+  },
+  "external": {
+    "volcengine": {
+      "access_key": "your-access-key",
+      "secret_key": "your-secret-key",
+      "region": "cn-beijing"
+    }
+  }
+}
+```

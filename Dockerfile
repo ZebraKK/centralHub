@@ -9,6 +9,9 @@ RUN apk add --no-cache git make
 # Set working directory
 WORKDIR /app
 
+# Set Go proxy for China mainland
+ENV GOPROXY=https://goproxy.cn,direct
+
 # Copy go mod files
 COPY go.mod go.sum ./
 

@@ -1,0 +1,29 @@
+{
+  "server": {
+    "port": "8081",
+    "mode": "test",
+    "timeout": 30
+  },
+  "database": {
+    "mongodb": {
+      "uri": "mongodb://localhost:27017",
+      "database": "centralhub_test",
+      "timeout": 10
+    }
+  },
+  "logger": {
+    "level": "info",
+    "output": "stdout",
+    "file_path": "logs/app_test.log",
+    "max_size": 100,
+    "max_backups": 3,
+    "max_age": 7
+  },
+  "external": {
+    "volcengine": {
+      "access_key": "your-access-key",
+      "secret_key": "your-secret-key",
+      "region": "cn-beijing"
+    }
+  }
+}
