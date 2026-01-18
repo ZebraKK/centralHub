@@ -163,6 +163,7 @@ GET /health
 
 - domain struct
     - 主要单元
+    - dcdn config 考慮（兜底 這種）
     - 外围（账户/公司）
 
 - mongo interface
@@ -187,7 +188,9 @@ GET /health
     - 实现 验证接口
         - 接口、实现逻辑，流程图
 
-
+- 另外的服務
+    - 通知、告警
+    - 刷新預取
 
 dir 说明
 
