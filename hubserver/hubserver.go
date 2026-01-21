@@ -14,7 +14,7 @@ func NewHubServer() *HubServer {
 	}
 }
 
-func (hs *HubServer) getOwnership(domain string) (string, error) {
+func (hs *HubServer) getOwnership(name string) (string, error) {
 
 	// db query
 	// hs.ownershipDB.get(domain)

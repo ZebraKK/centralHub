@@ -16,7 +16,7 @@ func (hs *HubServer) HandleOwnershipCheck(c *gin.Context) {
 	// 响应对应验证类型的 值 和此次验证请求的任务ID
 
 	type ReqObj struct {
-		Domain     string `form:"domain" binding:"required"`
+		Name       string `form:"name" binding:"required"`
 		VerifyType string `form:"verify_type" binding:"required"` // dns | file
 	}
 	var reqObj ReqObj
@@ -28,20 +28,20 @@ func (hs *HubServer) HandleOwnershipCheck(c *gin.Context) {
 	var value string
 	switch reqObj.VerifyType {
 	case "dns":
-		value = hs.makeTXTStr(reqObj.Domain)
+		value = hs.makeTXTStr(reqObj.Name)
 	case "file":
-		_, value = hs.makeFile(reqObj.Domain)
+		_, value = hs.makeFile(reqObj.Name)
 	}
 
 	type RespObj struct {
-		Domain     string `json:"domain"`
+		Name       string `json:"name"`
 		VerifyType string `json:"verify_type"`
 		Value      string `json:"value"`
 		ReqID      string `json:"req_id"`
 	}
 
 	respObj := RespObj{
-		Domain:     reqObj.Domain,
+		Name:       reqObj.Name,
 		VerifyType: reqObj.VerifyType,
 		Value:      value,
 		ReqID:      "example_req_id", // same as workflow task id
@@ -59,8 +59,8 @@ func (hs *HubServer) HandleOwnershipVerify(c *gin.Context) {
 	// 检查对应验证结果 或者当前进度
 
 	type ReqObj struct {
-		Domain string `form:"domain" binding:"required"`
-		ReqID  string `form:"req_id" binding:"required"`
+		Name  string `form:"name" binding:"required"`
+		ReqID string `form:"req_id" binding:"required"`
 	}
 	var reqObj ReqObj
 	//parse form data
@@ -74,19 +74,19 @@ func (hs *HubServer) HandleOwnershipVerify(c *gin.Context) {
 	finish := false
 	switch verifyType {
 	case "dns":
-		finish = hs.checkDNSRecords(reqObj.Domain)
+		finish = hs.checkDNSRecords(reqObj.Name)
 	case "file":
-		finish = hs.checkFileUpload(reqObj.Domain)
+		finish = hs.checkFileUpload(reqObj.Name)
 	}
 
 	type RespObj struct {
-		Domain string `json:"domain"`
+		Name   string `json:"name"`
 		Status string `json:"status"` // pending | verified | failed
 		ReqID  string `json:"req_id"`
 	}
 
 	respObj := RespObj{
-		Domain: reqObj.Domain,
+		Name:   reqObj.Name,
 		Status: "pending",
 		ReqID:  reqObj.ReqID,
 	}
@@ -101,22 +101,22 @@ func (hs *HubServer) HandleOwnershipVerify(c *gin.Context) {
 
 }
 
-func (hs *HubServer) makeTXTStr(domain string) string {
+func (hs *HubServer) makeTXTStr(name string) string {
 	// 生成 TXT 记录验证字符串
-	return domain + "example TXT record" // hash(domain, ts, etc...)
+	return name + "example TXT record" // hash(domain, ts, etc...)
 }
 
-func (hs *HubServer) makeFile(domain string) (name, value string) {
+func (hs *HubServer) makeFile(name string) (file, value string) {
 	// 生成 CNAME 记录验证字符串
-	return "example.com", domain + "cname_value"
+	return "example.com", name + "cname_value"
 }
 
-func (hs *HubServer) checkDNSRecords(domain string) bool {
+func (hs *HubServer) checkDNSRecords(name string) bool {
 	// 检查 DNS 记录
 	return true
 }
 
-func (hs *HubServer) checkFileUpload(domain string) bool {
+func (hs *HubServer) checkFileUpload(name string) bool {
 	// 检查文件上传
 	return true
 }

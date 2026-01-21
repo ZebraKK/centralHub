@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/rs/zerolog"
 
 	"centralHub/model"
 )
@@ -15,8 +16,8 @@ import (
 // 随机码长度[1,13], .www 长度4
 const dnspodMaxSubdomainLen = 50
 
-func (wf *Workflow) makeCname(c *gin.Context, obj model.XLDomain) string {
-	domainName := "" // placeholder, from obj
+func (wf *Workflow) makeCname(rlog *zerolog.Logger, domainName string) string {
+	//domainName := "" // placeholder, from obj
 	uuid := uuid.New()
 	var cnamePrefix string
 	var start, end = 0, len(domainName)
@@ -29,7 +30,7 @@ func (wf *Workflow) makeCname(c *gin.Context, obj model.XLDomain) string {
 		}
 		cnamePrefix = domainName[start:end]
 		// dnspod最低用户权限不支持subdomain的域名层次超过3层，这里普通域名设置成1层，泛域名设置为2层
-		cnamePrefix = strings.Replace(cnamePrefix, ".", "-", -1)
+		cnamePrefix = strings.ReplaceAll(cnamePrefix, ".", "-")
 		cnamePrefix = cnamePrefix + "-" + uuid.String()
 	}
 	if strings.HasPrefix(domainName, ".") { // 泛域名
@@ -37,11 +38,14 @@ func (wf *Workflow) makeCname(c *gin.Context, obj model.XLDomain) string {
 	}
 
 	cnameSuffix := ".xldns.com" // placeholder, to define
+	rlog.Debug().Str("cname", cnamePrefix+cnameSuffix).Msg("Generated CNAME")
 
 	return cnamePrefix + cnameSuffix
 }
 
-func (wf *Workflow) createVendorDomain(c *gin.Context, obj model.XLDomain) string {
+// todo: input obj struct --> model.CreateDomainRequest or model.CDNDomain
+func (wf *Workflow) createVendorDomain(c *gin.Context, rlog *zerolog.Logger, obj *model.CDNDomain) string {
+	rlog.Debug().Msg("Start create vendor domain")
 	// 1, 确定要使用的vendor
 	vendors := []string{"mock-vendor"}
 
@@ -70,11 +74,11 @@ CreateDomain 创建域名的工作流
 2, create vendor domain
 3,
 */
-func (wf *Workflow) CreateDomain(c *gin.Context, obj model.XLDomain) string {
+func (wf *Workflow) CreateDomain(c *gin.Context, rlog *zerolog.Logger, obj *model.CDNDomain) string {
 
-	cname := wf.makeCname(c, obj)
+	cname := wf.makeCname(rlog, obj.Name)
 
-	_ = wf.createVendorDomain(c, obj)
+	_ = wf.createVendorDomain(c, rlog, obj)
 
 	return cname
 }

@@ -42,10 +42,10 @@ func (ds *DomainStore) Close() error {
 }
 
 func (ds *DomainStore) Insert(ctx context.Context, domain models.XLDomain) error {
-	logger.RunLogger.Info().Str("domain", domain.Name).Msg("Inserting domain")
+	logger.RunLogger.Info().Str("domain", domain.DomainConfig.Name).Msg("Inserting domain")
 	_, err := ds.DB.InsertOne(ctx, domain)
 	if err != nil {
-		logger.RunLogger.Error().Err(err).Str("domain", domain.Name).Msg("Insert domain failed")
+		logger.RunLogger.Error().Err(err).Str("domain", domain.DomainConfig.Name).Msg("Insert domain failed")
 	}
 	return err
 }
