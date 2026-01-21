@@ -29,7 +29,7 @@ func main() {
 // loadConfig loads configuration from file or uses defaults
 func loadConfig() *config.Config {
 	// Define command line flag for config file path
-	configPath := flag.String("config", "config.yaml", "path to config file")
+	configPath := flag.String("config", "config.json", "path to config file (JSON format)")
 	flag.Parse()
 
 	// Try to load config file

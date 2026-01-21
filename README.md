@@ -24,7 +24,7 @@
 
 1. **复制配置文件**
 ```bash
-cp config/config.dev.yaml config.yaml
+cp config/config.dev.json config.json
 ```
 
 2. **启动所有服务**
@@ -95,8 +95,8 @@ go mod download
 #### 配置文件
 
 ```bash
-cp config.yaml.example config.yaml
-# 编辑 config.yaml，配置数据库连接等信息
+cp config.json.example config.json
+# 编辑 config.json，配置数据库连接等信息
 ```
 
 #### 运行应用
@@ -110,12 +110,12 @@ make build
 ./centralhub
 
 # 指定配置文件
-./centralhub -config=/path/to/config.yaml
+./centralhub -config=/path/to/config.json
 ```
 
 ## 配置说明
 
-配置文件支持 YAML 格式，包含以下部分：
+配置文件使用 JSON 格式，包含以下部分：
 
 - **server**: 服务器配置（端口、模式、超时）
 - **database**: 数据库配置（MongoDB 连接）

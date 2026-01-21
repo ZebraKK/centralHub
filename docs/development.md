@@ -126,9 +126,9 @@ Air 会监控以下文件类型的变化：
 ```
 config/
 ├── config.go           # 配置加载逻辑
-├── config.dev.yaml     # 开发环境
-├── config.test.yaml    # 测试环境
-├── config.yaml.example # 配置模板
+├── config.dev.json     # 开发环境
+├── config.test.json    # 测试环境
+├── config.json.example # 配置模板
 └── README.md          # 配置文档
 ```
 
@@ -137,7 +137,7 @@ config/
 #### 方式一：复制开发配置
 
 ```bash
-cp config/config.dev.yaml config.yaml
+cp config/config.dev.json config.json
 ```
 
 #### 方式二：使用 Make 命令
@@ -149,14 +149,14 @@ make setup-config
 #### 方式三：自定义配置
 
 ```bash
-cp config.yaml.example config.yaml
-# 编辑 config.yaml，填入你的配置
+cp config.json.example config.json
+# 编辑 config.json，填入你的配置
 ```
 
 ### 配置优先级
 
-1. 命令行参数 `-config=/path/to/config.yaml`
-2. 默认配置文件 `config.yaml`
+1. 命令行参数 `-config=/path/to/config.json`
+2. 默认配置文件 `config.json`
 3. 代码中的默认值
 
 ---
@@ -332,7 +332,7 @@ docker-compose ps mongodb
 make logs-db
 
 # 3. 验证连接字符串
-# 确认 config.yaml 中的 MongoDB URI 正确
+# 确认 config.json 中的 MongoDB URI 正确
 # mongodb://admin:admin123@mongodb:27017
 
 # 4. 重启 MongoDB
@@ -382,7 +382,7 @@ logger.RunLogger.Debug().
 make dev-hot-down
 
 # 本地运行并使用 Delve
-dlv debug -- -config=config.yaml
+dlv debug -- -config=config.json
 ```
 
 ### 3. 查看环境变量

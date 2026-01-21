@@ -31,11 +31,11 @@ make --version
 
 ```bash
 # 复制开发配置
-cp config/config.dev.yaml config.yaml
+cp config/config.dev.json config.json
 
 # 或复制示例配置并编辑
-cp config.yaml.example config.yaml
-# 编辑 config.yaml 配置你的设置
+cp config.json.example config.json
+# 编辑 config.json 配置你的设置
 ```
 
 ### 2. 启动服务
@@ -197,7 +197,7 @@ docker push username/centralhub:v1.0.0
 
 1. **使用环境特定的配置文件**
 ```bash
-cp config/config.prod.yaml config.yaml
+cp config/config.prod.json config.json
 ```
 
 2. **使用环境变量覆盖敏感配置**
@@ -253,8 +253,8 @@ docker-compose logs mongodb
 
 3. **检查配置文件**
 ```bash
-# 确保 config.yaml 存在且格式正确
-cat config.yaml
+# 确保 config.json 存在且格式正确
+cat config.json
 ```
 
 ### 数据库连接失败

@@ -136,11 +136,11 @@ docker-clean:
 
 # Setup: Create config file from example
 setup-config:
-	@if [ ! -f config.yaml ]; then \
-		cp config/config.dev.yaml config.yaml; \
-		echo "Created config.yaml from config.dev.yaml"; \
+	@if [ ! -f config.json ]; then \
+		cp config/config.dev.json config.json; \
+		echo "Created config.json from config.dev.json"; \
 	else \
-		echo "config.yaml already exists"; \
+		echo "config.json already exists"; \
 	fi
 
 # Check service health
