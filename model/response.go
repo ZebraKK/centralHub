@@ -1,7 +1,5 @@
 package model
 
-import "time"
-
 // Response 通用响应结构体
 type Response struct {
 	Code    int         `json:"code"`               // 响应码
@@ -22,12 +20,13 @@ type PageResponse struct {
 
 // DomainResponse 域名响应结构体
 type DomainResponse struct {
-	ID         string    `json:"id"`
-	DomainName string    `json:"domain_name"`
-	Status     string    `json:"status"`
-	Owner      string    `json:"owner"`
-	CreatedAt  time.Time `json:"created_at,omitempty"`
-	UpdatedAt  time.Time `json:"updated_at,omitempty"`
+	ID         string   `json:"id"`
+	DomainName string   `json:"domain_name"`
+	Status     string   `json:"status"`
+	Owner      string   `json:"owner"`
+	ICPInfo    *ICPInfo `json:"icp_info,omitempty"` // ICP备案信息
+	CreatedAt  int64    `json:"created_at,omitempty"`
+	UpdatedAt  int64    `json:"updated_at,omitempty"`
 }
 
 // CreateTaskResponse 创建任务响应结构体

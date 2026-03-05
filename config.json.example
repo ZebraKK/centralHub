@@ -24,6 +24,96 @@
       "access_key": "your-access-key",
       "secret_key": "your-secret-key",
       "region": "cn-beijing"
+    },
+    "mock": {
+      "enabled": true,
+      "base_path": "mock/data",
+      "servers": {
+        "dns": {
+          "enabled": true,
+          "port": 8091,
+          "delay": 100,
+          "error_rate": 0.0,
+          "record_mode": true,
+          "replay_mode": false,
+          "records_path": "mock/data/dns"
+        },
+        "icp": {
+          "enabled": true,
+          "port": 8092,
+          "delay": 100,
+          "error_rate": 0.0,
+          "record_mode": true,
+          "replay_mode": false,
+          "records_path": "mock/data/icp"
+        },
+        "cdn": {
+          "enabled": true,
+          "port": 8093,
+          "delay": 100,
+          "error_rate": 0.0,
+          "record_mode": true,
+          "replay_mode": false,
+          "records_path": "mock/data/cdn"
+        }
+      }
     }
+  },
+  "mock_services": {
+    "dns": {
+      "enabled": true,
+      "port": 8091,
+      "delay": 100,
+      "error_rate": 0.0,
+      "record_mode": true,
+      "replay_mode": false,
+      "records_path": "mock/data/dns"
+    },
+    "icp": {
+      "enabled": true,
+      "port": 8092,
+      "delay": 100,
+      "error_rate": 0.0,
+      "record_mode": true,
+      "replay_mode": false,
+      "records_path": "mock/data/icp"
+    },
+    "cdn": {
+      "enabled": true,
+      "port": 8093,
+      "delay": 100,
+      "error_rate": 0.0,
+      "record_mode": true,
+      "replay_mode": false,
+      "records_path": "mock/data/cdn"
+    },
+    "admin_api": {
+      "enabled": true,
+      "port": 8090,
+      "delay": 50,
+      "error_rate": 0.0,
+      "record_mode": true,
+      "replay_mode": false,
+      "records_path": "mock/data/admin"
+    }
+  },
+  "external_services": {
+    "dns": {
+      "api_url": "https://api.example.com/dns",
+      "api_key": "your-dns-api-key",
+      "provider": "default"
+    },
+    "icp": {
+      "api_url": "https://api.example.com/icp",
+      "api_key": "your-icp-api-key"
+    },
+    "cdn": {
+      "api_url": "https://api.example.com/cdn",
+      "api_key": "your-cdn-api-key"
+    }
+  },
+  "features": {
+    "enable_hot_reload": true,
+    "use_mock_services": true
   }
 }

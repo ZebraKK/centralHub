@@ -1,50 +1,134 @@
 package workflow
 
 import (
+	"context"
+	"fmt"
+	"math/rand"
+	"regexp"
 	"strings"
 	"sync"
+	"time"
 
-	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/rs/zerolog"
 
 	"centralHub/model"
 )
 
-// 域名cname采用拼接方式： xxx+随机+.www
-// dnspod subdomain长度限制50, www长度4, xxx长度自定义, 随机码长度[1,13]
-// 随机码长度[1,13], .www 长度4
-const dnspodMaxSubdomainLen = 50
+// CNAME 相关常量
+const (
+	// DNSPod subdomain长度限制
+	dnspodMaxSubdomainLen = 50
+	// CNAME 后缀
+	cnameSuffix = ".xldns.com"
+	// 最大重试次数
+	maxRetries = 3
+	// 特殊字符替换规则
+	invalidCharsRegex = `[^a-zA-Z0-9\-]`
+	// 最小随机字符串长度
+	minRandomLength = 6
+	// 最大随机字符串长度
+	maxRandomLength = 12
+)
 
+// validateCname 验证CNAME格式
+func validateCname(cname string) error {
+	// 检查长度
+	if len(cname) < 5 || len(cname) > 255 {
+		return fmt.Errorf("invalid CNAME length: %d", len(cname))
+	}
+
+	// 检查格式
+	if !strings.HasSuffix(cname, cnameSuffix) {
+		return fmt.Errorf("invalid CNAME suffix: %s", cname)
+	}
+
+	// 检查字符
+	matched, err := regexp.MatchString(`^[a-zA-Z0-9\-\.]+$`, cname)
+	if err != nil || !matched {
+		return fmt.Errorf("invalid CNAME characters: %s", cname)
+	}
+
+	return nil
+}
+
+// generateRandomString 生成指定长度的随机字符串
+func generateRandomString(length int) string {
+	const charset = "abcdefghijklmnopqrstuvwxyz0123456789"
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[rand.Intn(len(charset))]
+	}
+	return string(b)
+}
+
+// makeCname 生成域名的CNAME记录
+// 域名cname采用拼接方式： xxx+随机+.www
+// 支持特殊域名处理，确保唯一性和格式正确
 func (wf *Workflow) makeCname(rlog *zerolog.Logger, domainName string) string {
-	//domainName := "" // placeholder, from obj
-	uuid := uuid.New()
+	// 初始化随机数生成器
+	rand.Seed(time.Now().UnixNano())
+
+	// 生成随机字符串长度
+	randomLength := rand.Intn(maxRandomLength-minRandomLength+1) + minRandomLength
+
+	// 生成随机字符串
+	randomStr := generateRandomString(randomLength)
+
+	// 处理域名前缀
 	var cnamePrefix string
 	var start, end = 0, len(domainName)
-	var subDomainLen = dnspodMaxSubdomainLen - 4 - len(uuid.String())
+	var subDomainLen = dnspodMaxSubdomainLen - 4 - randomLength
+
+	// 检查域名长度
 	if len(domainName) > subDomainLen {
-		cnamePrefix = uuid.String()
+		// 域名太长，使用随机字符串作为前缀
+		cnamePrefix = randomStr
 	} else {
-		if strings.HasPrefix(domainName, ".") { // 泛域名
+		// 处理泛域名
+		if strings.HasPrefix(domainName, ".") {
 			start = 1
 		}
+
+		// 提取域名部分
 		cnamePrefix = domainName[start:end]
-		// dnspod最低用户权限不支持subdomain的域名层次超过3层，这里普通域名设置成1层，泛域名设置为2层
-		cnamePrefix = strings.ReplaceAll(cnamePrefix, ".", "-")
-		cnamePrefix = cnamePrefix + "-" + uuid.String()
+
+		// 替换无效字符
+		re := regexp.MustCompile(invalidCharsRegex)
+		cnamePrefix = re.ReplaceAllString(cnamePrefix, "-")
+
+		// 确保不以连字符开头或结尾
+		cnamePrefix = strings.Trim(cnamePrefix, "-")
+
+		// 添加随机字符串
+		cnamePrefix = cnamePrefix + "-" + randomStr
 	}
-	if strings.HasPrefix(domainName, ".") { // 泛域名
+
+	// 处理泛域名
+	if strings.HasPrefix(domainName, ".") {
 		cnamePrefix = cnamePrefix + ".www"
 	}
 
-	cnameSuffix := ".xldns.com" // placeholder, to define
-	rlog.Debug().Str("cname", cnamePrefix+cnameSuffix).Msg("Generated CNAME")
+	// 组合完整CNAME
+	cname := cnamePrefix + cnameSuffix
 
-	return cnamePrefix + cnameSuffix
+	// 验证CNAME格式
+	if err := validateCname(cname); err != nil {
+		rlog.Error().Err(err).Str("domain", domainName).Msg("Invalid CNAME generated")
+		// 生成备用CNAME
+		cname = "domain-" + randomStr + cnameSuffix
+	}
+
+	// 记录生成的CNAME
+	rlog.Info().
+		Str("domain", domainName).
+		Str("cname", cname).
+		Msg("Generated CNAME")
+
+	return cname
 }
 
-// todo: input obj struct --> model.CreateDomainRequest or model.CDNDomain
-func (wf *Workflow) createVendorDomain(c *gin.Context, rlog *zerolog.Logger, obj *model.CDNDomain) string {
+// createVendorDomain 调用供应商接口创建域名
+func (wf *Workflow) createVendorDomain(ctx context.Context, rlog *zerolog.Logger, obj *model.CDNDomain) string {
 	rlog.Debug().Msg("Start create vendor domain")
 	// 1, 确定要使用的vendor
 	vendors := []string{"mock-vendor"}
@@ -57,7 +141,7 @@ func (wf *Workflow) createVendorDomain(c *gin.Context, rlog *zerolog.Logger, obj
 			defer wg.Done()
 
 			vendorClt := wf.getVendorClient(vendor)
-			_ = vendorClt.CreateDomain(c, obj)
+			_ = vendorClt.CreateDomain(ctx, obj)
 		}(v)
 	}
 	// 3, 返回vendor的域名
@@ -70,15 +154,36 @@ func (wf *Workflow) createVendorDomain(c *gin.Context, rlog *zerolog.Logger, obj
 
 /*
 CreateDomain 创建域名的工作流
-1, make Cname
-2, create vendor domain
-3,
+1. 检查ICP备案状态
+2. 生成CNAME
+3. 创建vendor域名
+4. 创建DNS记录
+5. 创建CDN配置
 */
-func (wf *Workflow) CreateDomain(c *gin.Context, rlog *zerolog.Logger, obj *model.CDNDomain) string {
+func (wf *Workflow) CreateDomain(ctx context.Context, rlog *zerolog.Logger, obj *model.CDNDomain) (string, *model.ICPRecord, error) {
+	// 步骤1：检查ICP备案状态
+	rlog.Info().Str("domain", obj.Name).Msg("Checking ICP status")
+	icpRecord, err := wf.CheckICPStatus(ctx, obj.Name)
+	if err != nil {
+		rlog.Error().Err(err).Str("domain", obj.Name).Msg("Failed to check ICP status")
+		// ICP检查失败不阻止创建流程，只记录警告
+		rlog.Warn().Str("domain", obj.Name).Msg("Proceeding without ICP verification")
+		icpRecord = nil
+	} else {
+		rlog.Info().
+			Str("domain", obj.Name).
+			Str("icp_number", icpRecord.ICPNumber).
+			Str("owner", icpRecord.Owner).
+			Msg("ICP status checked successfully")
+	}
 
+	// 步骤2：生成CNAME
+	rlog.Info().Str("domain", obj.Name).Msg("Generating CNAME")
 	cname := wf.makeCname(rlog, obj.Name)
 
-	_ = wf.createVendorDomain(c, rlog, obj)
+	// 步骤3：创建vendor域名（目前是占位符）
+	rlog.Info().Str("domain", obj.Name).Msg("Creating vendor domain")
+	_ = wf.createVendorDomain(ctx, rlog, obj)
 
-	return cname
+	return cname, icpRecord, nil
 }

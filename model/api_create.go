@@ -1,10 +1,11 @@
 package model
 
 type CreateDomainRequest struct {
-	Name  string            `json:"name"`
-	Cache DomainCacheConfig `json:"cache"`
-	Proxy DomainProxyConfig `json:"proxy"`
-	ACL   DomainACLConfig   `json:"acl"`
+	Name   string            `json:"name"`
+	UserID string            `json:"user_id"`
+	Cache  DomainCacheConfig `json:"cache"`
+	Proxy  DomainProxyConfig `json:"proxy"`
+	ACL    DomainACLConfig   `json:"acl"`
 }
 
 type CreateDomainResponse struct {
